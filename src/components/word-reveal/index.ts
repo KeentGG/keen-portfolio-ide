@@ -1,0 +1,5 @@
+export type { WordRevealProps, PropertyConfig, ContainerConfig, ContainerPropertyConfig, CubicBezier, SavedPreset, LegacyContainerConfig } from './types'
+export { WordRevealControlProviders } from './ControlProviders'
+export { PresetManager } from './PresetManager'
+export { PropertySection } from './PropertySection'
+export { TimingSection } from './TimingSection'
