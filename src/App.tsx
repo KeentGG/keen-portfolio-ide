@@ -5,9 +5,12 @@ import { ArrowRightIcon } from '@phosphor-icons/react/dist/csr/ArrowRight'
 import { stagger } from 'motion'
 import { useAnimate } from 'motion/react'
 
-const HEADLINE_TEXT = "I'm a frontend engineer that gives people software tools designed to be invisible."
+const HEADLINE_TEXT = "I'm a frontend engineer that builds intuitive tools designed to be invisible in your workflow."
 const HEADLINE_WORD_DURATION = 0.8
-const HEADLINE_STAGGER = 0.07
+const HEADLINE_STAGGER = 0.075
+const HEADLINE_INTRO_WORD_COUNT = 4
+const HEADLINE_INTRO_OPACITY_DURATION = HEADLINE_WORD_DURATION * 2
+const HEADLINE_INTRO_OPACITY_START_DELAY = HEADLINE_WORD_DURATION * 0.05
 const HEADLINE_BLUR_AMOUNT = 24
 const HEADLINE_Y_DISTANCE = 28
 const words = HEADLINE_TEXT.split(' ')
@@ -18,60 +21,74 @@ function App() {
   const [scope, animate] = useAnimate<HTMLDivElement>()
 
   useEffect(() => {
-    const headlineControls = animate([
+    const headlineContainerControls = animate(
+      '.headline-copy',
+      { x: [32, 0], y: [4, 0], scale: [1.07, 1] },
+      {
+        x: { duration: 2.3, delay: 0.05, ease: 'easeInOut' },
+        y: { duration: 0.84, delay: 0.167, ease: 'easeInOut' },
+        scale: { duration: 1.7, delay: 0, ease: [0.49, 0.15, 0.48, 0.85] },
+      },
+    )
+    const headlineIntroControls = animate(
+      '.headline-word--intro',
+      { opacity: [0, 1] },
+      {
+        duration: HEADLINE_INTRO_OPACITY_DURATION,
+        delay: stagger(HEADLINE_STAGGER, { startDelay: HEADLINE_INTRO_OPACITY_START_DELAY }),
+        ease: [0.55, 0.085, 0.68, 0.53],
+        opacity: { duration: 0.95, delay: 0, ease: 'easeInOut' },
+      },
+    )
+    const headlineRestControls = animate(
       [
-        '.headline-copy',
-        { x: [20, 0], y: [20, 0], scale: [0.97, 1] },
-        {
-          at: HEADLINE_SEQUENCE_START,
-          x: { duration: 1.5, delay: 0.013, ease: [0.45, 0.05, 0.55, 0.95] },
-          y: { duration: 0.84, delay: 0.167, ease: [0.16, 1, 0.3, 1] },
-          scale: { duration: 1.05, delay: 0.13, ease: [0.45, 0.05, 0.55, 0.95] },
-        },
+        [
+          '.headline-word--rest',
+          { filter: [`blur(${HEADLINE_BLUR_AMOUNT}px)`, 'blur(0px)'] },
+          {
+            at: HEADLINE_SEQUENCE_START,
+            duration: HEADLINE_WORD_DURATION,
+            delay: stagger(HEADLINE_STAGGER, { startDelay: HEADLINE_WORD_DURATION * 0.15 }),
+            ease: [0.22, 0.68, 0.35, 1],
+          },
+        ],
+        [
+          '.headline-word--rest',
+          { y: [HEADLINE_Y_DISTANCE, 0] },
+          {
+            at: '<',
+            duration: HEADLINE_WORD_DURATION * 0.95,
+            delay: stagger(HEADLINE_STAGGER, { startDelay: HEADLINE_WORD_DURATION * 0.15 }),
+            ease: [0.16, 1, 0.3, 1],
+          },
+        ],
+        [
+          '.headline-word--rest',
+          { opacity: [0, 1] },
+          {
+            at: '<',
+            duration: HEADLINE_WORD_DURATION * 1.2,
+            delay: stagger(HEADLINE_STAGGER, { startDelay: HEADLINE_WORD_DURATION * 0.05 }),
+            ease: [0.55, 0.085, 0.68, 0.53],
+          },
+        ],
       ],
-      [
-        '.headline-word',
-        { filter: [`blur(${HEADLINE_BLUR_AMOUNT}px)`, 'blur(0px)'] },
-        {
-          at: HEADLINE_SEQUENCE_START,
-          duration: HEADLINE_WORD_DURATION,
-          delay: stagger(HEADLINE_STAGGER, { startDelay: HEADLINE_WORD_DURATION * 0.15 }),
-          ease: [0.22, 0.68, 0.35, 1],
-        },
-      ],
-      [
-        '.headline-word',
-        { y: [HEADLINE_Y_DISTANCE, 0] },
-        {
-          at: HEADLINE_SEQUENCE_START,
-          duration: HEADLINE_WORD_DURATION * 0.95,
-          delay: stagger(HEADLINE_STAGGER, { startDelay: HEADLINE_WORD_DURATION * 0.15 }),
-          ease: [0.16, 1, 0.3, 1],
-        },
-      ],
-      [
-        '.headline-word',
-        { opacity: [0, 1] },
-        {
-          at: HEADLINE_SEQUENCE_START,
-          duration: HEADLINE_WORD_DURATION * 1.2,
-          delay: stagger(HEADLINE_STAGGER, { startDelay: HEADLINE_WORD_DURATION * 0.05 }),
-          ease: [0.55, 0.085, 0.68, 0.53],
-        },
-      ],
-    ])
-    const supportingCopyDelay = headlineControls.duration * 0.5
+      { delay: headlineIntroControls.duration * 0.5 },
+    )
+    const supportingCopyDelay = (headlineIntroControls.duration + headlineRestControls.duration) * 0.7
     const supportingCopyControls = animate(
       '.supporting-copy',
-      { opacity: [0, 1], y: [-2, 0] },
+      { opacity: [0, 1], y: [3, 0] },
       {
-        y: { duration: 0.85, delay: supportingCopyDelay, ease: 'easeInOut' },
-        opacity: { duration: 0.95, delay: supportingCopyDelay + 0.15, ease: 'easeIn' },
+        y: { duration: 1, delay: supportingCopyDelay, ease: 'easeOut' },
+        opacity: { duration: 1, delay: supportingCopyDelay + 0.05, ease: 'easeIn' },
       },
     )
 
     return () => {
-      headlineControls.stop()
+      headlineContainerControls.stop()
+      headlineIntroControls.stop()
+      headlineRestControls.stop()
       supportingCopyControls.stop()
     }
   }, [animate, animationRun])
@@ -89,7 +106,7 @@ function App() {
 
       {/* Header group — name + role */}
       <div className="flex gap-1 text-base items-center justify-center mb-24">
-        <span className="text-text-primary font-normal tracking-normal">
+        <span className="text-text-primary font-light tracking-normal">
           Keanu Kent Gargar
         </span>
         <span className="text-[#3f677d] font-extralight tracking-normal">
@@ -100,23 +117,27 @@ function App() {
       {/* Content block — headline + description with arrow */}
       <div ref={scope} key={animationRun} className="flex flex-col gap-3 items-center max-w-[1200px]">
         <h1
-          className="headline-copy text-text-primary text-2xl font-extralight leading-[1.2] text-center"
+          className="headline-copy text-text-primary text-2xl max-w-3xl font-extralight leading-[1.2] text-center"
           style={{ transform: 'translate(20px, 20px) scale(0.97)' }}
         >
-          {words.map((word, i) => (
-            <span
-              key={`${word}-${i}`}
-              className="headline-word inline-block origin-left"
-              style={{
-                opacity: 0,
-                filter: `blur(${HEADLINE_BLUR_AMOUNT}px)`,
-                transform: `translateY(${HEADLINE_Y_DISTANCE}px)`,
-                willChange: 'transform, filter, opacity',
-              }}
-            >
-              {word}{i < words.length - 1 ? '\u00A0' : ''}
-            </span>
-          ))}
+          {words.map((word, i) => {
+            const isIntroWord = i < HEADLINE_INTRO_WORD_COUNT
+
+            return (
+              <span
+                key={`${word}-${i}`}
+                className={`headline-word inline-block origin-left ${isIntroWord ? 'headline-word--intro' : 'headline-word--rest'}`}
+                style={{
+                  opacity: 0,
+                  filter: isIntroWord ? 'none' : `blur(${HEADLINE_BLUR_AMOUNT}px)`,
+                  transform: isIntroWord ? 'none' : `translateY(${HEADLINE_Y_DISTANCE}px)`,
+                  willChange: 'transform, filter, opacity',
+                }}
+              >
+                {word}{i < words.length - 1 ? '\u00A0' : ''}
+              </span>
+            )
+          })}
         </h1>
 
         <div
