@@ -1,9 +1,80 @@
+@import "./theme/tokens.css";
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #08090c;
-  --color-text-primary: #bec2d6;
-  --color-text-secondary: #868a9e;
+  /* ── Fonts ─────────────────────────────────────── */
+  --font-sora:        "Sora", sans-serif;
+  --font-host-grotek: "Host Grotesk", sans-serif;
 
-  --font-sora: "Sora", sans-serif;
+  /* ── Colors — Backgrounds ─────────────────────── */
+  --color-ide-bg-deep:       #0c101e;
+  --color-ide-bg-shell:      #0e1324;
+  --color-ide-bg-active-tab: #18203a;
+  --color-ide-bg-surface:    #121728;
+  --color-ide-bg-muted:      #1f212d;
+
+  /* ── Colors — Text ────────────────────────────── */
+  --color-ide-text-primary:   #bec2d6;
+  --color-ide-text-secondary: #b0bff2;
+  --color-ide-text-muted:     #b4b8d1;
+  --color-ide-text-dim:       #7881a3;
+  --color-ide-text-accent:    #3f677d;
+  --color-ide-text-ghost:     #414966;
+  --color-ide-text-time:      #7cc6f4;
+
+  /* ── Colors — Icons ───────────────────────────── */
+  --color-ide-icon-blue:  #1c568a;
+  --color-ide-icon-muted: #656e8c;
+
+  /* ── Colors — Borders ─────────────────────────── */
+  --color-ide-border-subtle:    #9eade1;
+  --color-ide-border-separator: #7881a3;
+
+  /* ── Spacing (IDE-specific) ───────────────────── */
+  --spacing-ide-panel:   1px;
+  --spacing-ide-tab:     6px;
+  --spacing-ide-search:  8px;
+  --spacing-ide-content: 128px;
+  --spacing-ide-gap:     32px;
+  --spacing-ide-sidebar: 16px;
+  --spacing-ide-sb-px:   18px;
+  --spacing-ide-pill:    4px;
+  --spacing-ide-tab-x:   12px;
+  --spacing-ide-tab-y:   6px;
+
+  /* ── Border Radius ────────────────────────────── */
+  --radius-ide-panel:  8px;
+  --radius-ide-pill:   32px;
+  --radius-ide-tab:    16px;
+  --radius-ide-btn:    6px;
+  --radius-ide-sm:     4px;
+
+  /* ── Colors — Legacy (kept for App.tsx compat) ── */
+  --color-bg:            #08090c;
+  --color-text-primary:  #bec2d6;
+  --color-text-secondary: #868a9e;
+}
+
+/* ── Global Base Styles ────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--ide-bg-deep);
+  color: var(--ide-text-primary);
+  font-family: var(--font-sora);
+  font-weight: 200;
+  line-height: 1.2;
+  overflow-x: hidden;
 }

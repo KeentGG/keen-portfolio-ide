@@ -1,0 +1,66 @@
+/*
+ * IDE Theme — Design Tokens
+ * Extracted from Penpot "Editor IDE Theme" board
+ *
+ * These CSS custom properties are the single source of truth.
+ * Tailwind utilities are mapped from these in index.css via @theme.
+ */
+
+:root {
+  /* ── Backgrounds ─────────────────────────────────── */
+  --ide-bg-deep:        #0c101e;   /* Main editor, sidebar, right panel         */
+  --ide-bg-shell:       #0e1324;   /* Editor switch pill background             */
+  --ide-bg-active-tab:  #18203a;   /* Active tab (Preview) background           */
+  --ide-bg-surface:     #121728;   /* Editor switch border                      */
+  --ide-bg-muted:       #1f212d;   /* Arrow/separator strokes                   */
+  --ide-bg-overlay:     #0c101e99; /* Sidebar header overlay (60% opacity)      */
+
+  /* ── Borders ─────────────────────────────────────── */
+  --ide-border-subtle:    #9eade10D; /* Tab bar border (5% opacity)             */
+  --ide-border-hover:     #9eade108; /* Tab bar hover (3% opacity)              */
+  --ide-border-separator: #7881a3;   /* Section separators (used at 7-10% alpha) */
+  --ide-border-panel:     #0c101e;   /* Panel edge separators (60% opacity)     */
+
+  /* ── Text ────────────────────────────────────────── */
+  --ide-text-primary:   #bec2d6;   /* Name, main tagline                        */
+  --ide-text-secondary: #b0bff2;   /* Editor/Preview toggle labels              */
+  --ide-text-muted:     #b4b8d1;   /* Tab labels, search placeholder            */
+  --ide-text-dim:       #7881a3;   /* KEEN-PORTFOLIO label                      */
+  --ide-text-accent:    #3f677d;   /* Job title, comment markers                */
+  --ide-text-ghost:     #414966;   /* Sub-tagline                               */
+  --ide-text-time:      #7cc6f4;   /* Status bar time                           */
+
+  /* ── Icons ───────────────────────────────────────── */
+  --ide-icon-blue:  #1c568a;       /* Sidebar icons (folder, git)               */
+  --ide-icon-muted: #656e8c;       /* Utility icons (search, arrows)            */
+
+  /* ── Gradient (outer shell background) ───────────── */
+  --ide-gradient-start: #2896de1a; /* ~10% opacity                              */
+  --ide-gradient-end:   #11145e99; /* ~60% opacity                              */
+
+  /* ── Fonts ───────────────────────────────────────── */
+  --font-sora:         "Sora", sans-serif;
+  --font-host-grotek:  "Host Grotesk", sans-serif;
+
+  /* ── Spacing Scale (IDE-specific) ────────────────── */
+  --ide-space-panel-gap:   1px;
+  --ide-space-tab-gap:     6px;
+  --ide-space-search-pad:  8px;
+  --ide-space-content-px:  128px;
+  --ide-space-content-gap: 32px;
+  --ide-space-sidebar-gap: 16px;
+  --ide-space-sidebar-px:  18px;
+  --ide-space-pill-pad:    4px;
+  --ide-space-tab-pad-x:   12px;
+  --ide-space-tab-pad-y:   6px;
+
+  /* ── Border Radius ───────────────────────────────── */
+  --ide-radius-panel:   8px;
+  --ide-radius-pill:    32px;
+  --ide-radius-tab:     16px;
+  --ide-radius-button:  6px;
+  --ide-radius-sm:      4px;
+
+  /* ── Shadows ─────────────────────────────────────── */
+  --ide-shadow-panel: 2px 4px 16px 0px #0d122299;
+}

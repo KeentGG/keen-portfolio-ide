@@ -1,0 +1,7 @@
+export { EditorShell } from './EditorShell'
+export { TopBar } from './TopBar'
+export { PrimarySidebar } from './PrimarySidebar'
+export { MainEditor } from './MainEditor'
+export { RightSidebar } from './RightSidebar'
+export { StatusBar } from './StatusBar'
+export { EditorSwitch } from './EditorSwitch'
