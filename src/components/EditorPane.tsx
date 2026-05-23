@@ -21,7 +21,7 @@ function SourceView({ source }: { source: string }) {
 }
 
 export function EditorPane() {
-  const { files, activeFile, sources, loading, error, selectFile } = useFileSystem()
+  const { activeFile, sources, loading, error } = useFileSystem()
   const containerRef = useRef<HTMLDivElement>(null)
 
   // Scroll to top when file changes
@@ -31,26 +31,8 @@ export function EditorPane() {
 
   return (
     <div className="flex flex-col flex-1 overflow-hidden">
-      {/* File tabs */}
-      <div className="flex items-center shrink-0 overflow-x-auto border-b border-ide-border-subtle/5">
-        {files.map((file) => (
-          <button
-            key={file.id}
-            type="button"
-            onClick={() => selectFile(file)}
-            className={`flex items-center gap-1 px-3 py-1.5 text-xs font-host-grotek whitespace-nowrap cursor-pointer border-none transition-colors ${
-              activeFile.id === file.id
-                ? 'bg-ide-bg-active-tab text-ide-text-muted border-b-2 border-ide-text-secondary/30'
-                : 'bg-transparent text-ide-text-dim hover:text-ide-text-muted'
-            }`}
-          >
-            {file.name}
-          </button>
-        ))}
-      </div>
-
       {/* File path breadcrumb */}
-      <div className="flex items-center px-4 py-1.5 text-[11px] font-host-grotek text-ide-text-dim/60 shrink-0">
+      <div className="flex items-center px-4 py-1.5 text-[11px] font-host-grotek text-ide-text-dim/60 shrink-0 border-b border-ide-border-subtle/5">
         {activeFile.path}
       </div>
 

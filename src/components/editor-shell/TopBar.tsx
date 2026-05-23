@@ -1,14 +1,5 @@
 import { MagnifyingGlassIcon } from '@phosphor-icons/react'
-
-interface FileTab {
-  name: string
-  active?: boolean
-}
-
-const TABS: FileTab[] = [
-  { name: 'home.tsx', active: true },
-  { name: 'career.tsx' },
-]
+import { useFileSystem } from './file-system-context'
 
 function SearchBar() {
   return (
@@ -21,15 +12,12 @@ function SearchBar() {
   )
 }
 
-function FileTabChip({ name, active }: FileTab) {
+function ActiveFileTab() {
+  const { activeFile } = useFileSystem()
+
   return (
-    <div
-      className={`flex items-center gap-1 font-host-grotek px-ide-tab-x py-ide-tab-y ${
-        active ? 'bg-ide-bg-active-tab rounded-ide-tab' : 'rounded-ide-sm'
-      }`}
-    >
-      <span className="text-xs text-ide-text-muted font-normal">{name}</span>
-      <span className="text-ide-text-muted/50 text-[10px] ml-1">✕</span>
+    <div className="flex items-center gap-1 px-3 py-1.5 bg-ide-bg-active-tab rounded-ide-tab font-host-grotek">
+      <span className="text-xs text-ide-text-muted font-normal">{activeFile.name}</span>
     </div>
   )
 }
@@ -40,12 +28,8 @@ export function TopBar() {
       <SearchBar />
 
       <div className="flex items-center gap-3">
+        <ActiveFileTab />
         <SearchBar />
-        <div className="flex items-center gap-ide-tab">
-          {TABS.map((tab) => (
-            <FileTabChip key={tab.name} {...tab} />
-          ))}
-        </div>
       </div>
     </div>
   )
