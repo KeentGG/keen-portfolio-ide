@@ -3,7 +3,7 @@ import { createHighlighter } from 'shiki'
 import type { HighlighterCore } from 'shiki'
 import { useFileSystem } from './editor-shell/file-system-context'
 
-// Eagerly initialize on module load (not on first file open)
+// Eagerly initialize on module load
 const highlighterPromise: Promise<HighlighterCore> = createHighlighter({
   themes: ['github-dark'],
   langs: ['tsx', 'css', 'typescript'],
@@ -17,47 +17,40 @@ async function highlight(source: string, lang: string): Promise<string> {
   return hl.codeToHtml(source, {
     lang,
     theme: 'github-dark',
-    transformers: [
-      {
-        line(node, line) {
-          node.properties['data-line'] = line
-        },
-      },
-    ],
   })
-}
-
-function LineNumbers({ count }: { count: number }) {
-  return (
-    <div
-      className="sticky left-0 z-10 shrink-0 select-none text-right pr-4 font-mono text-[13px] leading-[22px] bg-ide-bg-deep"
-      style={{ minWidth: '48px' }}
-    >
-      {Array.from({ length: count }, (_, i) => (
-        <div key={i} className="min-h-[22px] text-ide-text-dim/40 hover:text-ide-text-dim/70 transition-colors">
-          {i + 1}
-        </div>
-      ))}
-    </div>
-  )
 }
 
 function CodeView({ source, lang }: { source: string; lang: string }) {
   const [html, setHtml] = useState<string>('')
-  const lineCount = source.split('\n').length
+  const [lineCount, setLineCount] = useState(() => source.split('\n').length)
 
-  // Show raw code immediately, highlight in background
   useEffect(() => {
     let cancelled = false
     highlight(source, lang).then((h) => {
-      if (!cancelled) setHtml(h)
+      if (cancelled) return
+      setHtml(h)
+      // Count lines from Shiki's actual output
+      const lines = h.match(/class="line"/g)
+      if (lines) setLineCount(lines.length)
     })
     return () => { cancelled = true }
   }, [source, lang])
 
   return (
     <div className="flex overflow-x-auto">
-      <LineNumbers count={lineCount} />
+      {/* Sticky line numbers */}
+      <div
+        className="sticky left-0 z-10 shrink-0 select-none text-right pr-4 font-mono text-[13px] leading-[22px] bg-ide-bg-deep"
+        style={{ minWidth: '48px' }}
+      >
+        {Array.from({ length: lineCount }, (_, i) => (
+          <div key={i} className="min-h-[22px] text-ide-text-dim/40 hover:text-ide-text-dim/70 transition-colors">
+            {i + 1}
+          </div>
+        ))}
+      </div>
+
+      {/* Highlighted code or raw fallback */}
       {html ? (
         <div
           className="flex-1 min-w-0 font-mono text-[13px] leading-[22px]"
