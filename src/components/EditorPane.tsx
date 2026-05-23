@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { createHighlighter } from 'shiki'
 import type { HighlighterCore } from 'shiki'
 import { useFileSystem } from './editor-shell/file-system-context'
@@ -20,21 +20,30 @@ async function highlight(source: string, lang: string): Promise<string> {
   })
 }
 
+function countLinesFromHtml(html: string): number {
+  // Parse into DOM to reliably count .line elements
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(html, 'text/html')
+  return doc.querySelectorAll('.line').length
+}
+
 function CodeView({ source, lang }: { source: string; lang: string }) {
   const [html, setHtml] = useState<string>('')
-  const [lineCount, setLineCount] = useState(() => source.split('\n').length)
+  const rawLineCount = useMemo(() => source.split('\n').length, [source])
+  const [highlightedLineCount, setHighlightedLineCount] = useState(rawLineCount)
 
   useEffect(() => {
     let cancelled = false
     highlight(source, lang).then((h) => {
       if (cancelled) return
       setHtml(h)
-      // Count lines from Shiki's actual output
-      const lines = h.match(/class="line"/g)
-      if (lines) setLineCount(lines.length)
+      setHighlightedLineCount(countLinesFromHtml(h))
     })
     return () => { cancelled = true }
   }, [source, lang])
+
+  // Use the larger of the two counts to ensure we cover everything
+  const lineCount = Math.max(rawLineCount, highlightedLineCount)
 
   return (
     <div className="flex overflow-x-auto">
