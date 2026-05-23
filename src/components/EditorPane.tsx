@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { PROJECT_FILES, DEFAULT_FILE_ID, fetchFileSource } from './editor-shell/file-system'
-import type { ProjectFile } from './editor-shell/file-system'
+import { useEffect, useRef } from 'react'
+import { useFileSystem } from './editor-shell/file-system-context'
 
 const NUM_CLASS = 'select-none text-right pr-4 shrink-0 w-12 text-ide-text-dim/40 text-[13px] font-host-grotek'
 
@@ -22,38 +21,8 @@ function SourceView({ source }: { source: string }) {
 }
 
 export function EditorPane() {
-  const [activeFile, setActiveFile] = useState<ProjectFile>(
-    PROJECT_FILES.find((f) => f.id === DEFAULT_FILE_ID) ?? PROJECT_FILES[0],
-  )
-  const [sources, setSources] = useState<Record<string, string>>({})
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const { files, activeFile, sources, loading, error, selectFile } = useFileSystem()
   const containerRef = useRef<HTMLDivElement>(null)
-
-  const loadFile = useCallback(async (file: ProjectFile) => {
-    // Cache hit
-    if (sources[file.id]) {
-      setActiveFile(file)
-      return
-    }
-
-    setLoading(true)
-    setError(null)
-    try {
-      const source = await fetchFileSource(file)
-      setSources((prev) => ({ ...prev, [file.id]: source }))
-      setActiveFile(file)
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to load file')
-    } finally {
-      setLoading(false)
-    }
-  }, [sources])
-
-  // Load default file on mount
-  useEffect(() => {
-    loadFile(PROJECT_FILES.find((f) => f.id === DEFAULT_FILE_ID) ?? PROJECT_FILES[0])
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Scroll to top when file changes
   useEffect(() => {
@@ -64,11 +33,11 @@ export function EditorPane() {
     <div className="flex flex-col flex-1 overflow-hidden">
       {/* File tabs */}
       <div className="flex items-center shrink-0 overflow-x-auto border-b border-ide-border-subtle/5">
-        {PROJECT_FILES.map((file) => (
+        {files.map((file) => (
           <button
             key={file.id}
             type="button"
-            onClick={() => loadFile(file)}
+            onClick={() => selectFile(file)}
             className={`flex items-center gap-1 px-3 py-1.5 text-xs font-host-grotek whitespace-nowrap cursor-pointer border-none transition-colors ${
               activeFile.id === file.id
                 ? 'bg-ide-bg-active-tab text-ide-text-muted border-b-2 border-ide-text-secondary/30'
