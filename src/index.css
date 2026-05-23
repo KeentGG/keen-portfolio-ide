@@ -78,3 +78,21 @@ body {
   line-height: 1.2;
   overflow-x: hidden;
 }
+
+/* Shiki code block reset */
+.shiki,
+.shiki pre {
+  margin: 0;
+  padding: 0;
+  background: transparent !important;
+}
+
+.shiki code {
+  display: block;
+}
+
+.shiki code .line {
+  display: block;
+  min-height: 22px;
+  padding-right: 16px;
+}
