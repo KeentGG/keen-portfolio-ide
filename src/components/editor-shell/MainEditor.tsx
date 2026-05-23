@@ -7,9 +7,9 @@ interface MainEditorProps {
 
 export function MainEditor({ editorSwitch, children }: MainEditorProps) {
   return (
-    <div className="flex flex-col flex-1 h-full bg-ide-bg-deep rounded-ide-panel min-w-0">
-      {/* Editor/Preview toggle bar */}
-      <div className="flex items-center justify-end w-full p-3">
+    <div className="relative flex flex-col flex-1 h-full bg-ide-bg-deep rounded-ide-panel min-w-0">
+      {/* Floating editor/preview toggle */}
+      <div className="absolute top-3 right-3 z-10">
         {editorSwitch}
       </div>
 

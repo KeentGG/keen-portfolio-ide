@@ -98,7 +98,8 @@ export function PreviewPane() {
       <button
         type="button"
         onClick={() => setAnimationRun((run) => run + 1)}
-        className="absolute right-3 top-3 flex h-9 items-center gap-2 rounded-md border border-ide-border-separator/30 px-3 text-xs font-light text-ide-text-secondary/60 bg-transparent cursor-pointer transition-colors hover:border-ide-border-separator/50 hover:text-ide-text-secondary focus-visible:outline-2 focus-visible:outline-offset-2"
+        className="absolute right-3 flex h-9 items-center gap-2 rounded-md border border-ide-border-separator/30 px-3 text-xs font-light text-ide-text-secondary/60 bg-transparent cursor-pointer transition-colors hover:border-ide-border-separator/50 hover:text-ide-text-secondary focus-visible:outline-2 focus-visible:outline-offset-2"
+        style={{ top: '48px' }}
         aria-label="Replay animations"
       >
         <ArrowClockwiseIcon className="h-3.5 w-3.5" weight="regular" aria-hidden="true" />
