@@ -21,29 +21,42 @@ async function highlight(source: string, lang: string): Promise<string> {
 }
 
 function countLinesFromHtml(html: string): number {
-  // Parse into DOM to reliably count .line elements
   const parser = new DOMParser()
   const doc = parser.parseFromString(html, 'text/html')
-  return doc.querySelectorAll('.line').length
+  const lineEls = doc.querySelectorAll('.line')
+  console.log('[EditorPane] DOMParser .line count:', lineEls.length)
+  return lineEls.length
 }
 
 function CodeView({ source, lang }: { source: string; lang: string }) {
   const [html, setHtml] = useState<string>('')
-  const rawLineCount = useMemo(() => source.split('\n').length, [source])
+  const rawLineCount = useMemo(() => {
+    const count = source.split('\n').length
+    console.log('[EditorPane] raw source line count:', count)
+    console.log('[EditorPane] source length (chars):', source.length)
+    console.log('[EditorPane] source preview (first 200):', source.slice(0, 200))
+    console.log('[EditorPane] source preview (last 200):', source.slice(-200))
+    return count
+  }, [source])
   const [highlightedLineCount, setHighlightedLineCount] = useState(rawLineCount)
 
   useEffect(() => {
     let cancelled = false
+    console.log('[EditorPane] starting highlight for lang:', lang)
     highlight(source, lang).then((h) => {
       if (cancelled) return
+      console.log('[EditorPane] highlighted HTML length:', h.length)
+      console.log('[EditorPane] highlighted preview (first 300):', h.slice(0, 300))
+      console.log('[EditorPane] highlighted preview (last 300):', h.slice(-300))
+      const domCount = countLinesFromHtml(h)
       setHtml(h)
-      setHighlightedLineCount(countLinesFromHtml(h))
+      setHighlightedLineCount(domCount)
     })
     return () => { cancelled = true }
   }, [source, lang])
 
-  // Use the larger of the two counts to ensure we cover everything
   const lineCount = Math.max(rawLineCount, highlightedLineCount)
+  console.log('[EditorPane] final lineCount:', lineCount, '(raw:', rawLineCount, 'highlighted:', highlightedLineCount, ')')
 
   return (
     <div className="flex overflow-x-auto">
@@ -78,6 +91,8 @@ function CodeView({ source, lang }: { source: string; lang: string }) {
 export function EditorPane() {
   const { activeFile, sources, loading, error } = useFileSystem()
   const containerRef = useRef<HTMLDivElement>(null)
+
+  console.log('[EditorPane] render — activeFile:', activeFile.name, 'loading:', loading, 'hasSource:', !!sources[activeFile.id])
 
   useEffect(() => {
     containerRef.current?.scrollTo({ top: 0 })
