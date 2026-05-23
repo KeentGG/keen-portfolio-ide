@@ -3,81 +3,72 @@ import { createHighlighter } from 'shiki'
 import type { HighlighterCore } from 'shiki'
 import { useFileSystem } from './editor-shell/file-system-context'
 
-let highlighterPromise: Promise<HighlighterCore> | null = null
+// Eagerly initialize on module load (not on first file open)
+const highlighterPromise: Promise<HighlighterCore> = createHighlighter({
+  themes: ['github-dark'],
+  langs: ['tsx', 'css', 'typescript'],
+})
 
-function getHighlighter() {
-  if (!highlighterPromise) {
-    highlighterPromise = createHighlighter({
-      themes: ['github-dark'],
-      langs: ['tsx', 'css', 'typescript'],
-    })
+async function highlight(source: string, lang: string): Promise<string> {
+  const hl = await highlighterPromise
+  if (!hl.getLoadedLanguages().includes(lang)) {
+    await hl.loadLanguage(lang as any)
   }
-  return highlighterPromise
+  return hl.codeToHtml(source, {
+    lang,
+    theme: 'github-dark',
+    transformers: [
+      {
+        line(node, line) {
+          node.properties['data-line'] = line
+        },
+      },
+    ],
+  })
 }
 
-function HighlightedCode({ source, lang }: { source: string; lang: string }) {
-  const [html, setHtml] = useState<string>('')
-  const [lineCount, setLineCount] = useState(0)
+function LineNumbers({ count }: { count: number }) {
+  return (
+    <div
+      className="sticky left-0 z-10 shrink-0 select-none text-right pr-4 font-mono text-[13px] leading-[22px] bg-ide-bg-deep"
+      style={{ minWidth: '48px' }}
+    >
+      {Array.from({ length: count }, (_, i) => (
+        <div key={i} className="min-h-[22px] text-ide-text-dim/40 hover:text-ide-text-dim/70 transition-colors">
+          {i + 1}
+        </div>
+      ))}
+    </div>
+  )
+}
 
+function CodeView({ source, lang }: { source: string; lang: string }) {
+  const [html, setHtml] = useState<string>('')
+  const lineCount = source.split('\n').length
+
+  // Show raw code immediately, highlight in background
   useEffect(() => {
     let cancelled = false
-    ;(async () => {
-      const hl = await getHighlighter()
-      if (cancelled) return
-
-      // Ensure language is loaded
-      if (!hl.getLoadedLanguages().includes(lang)) {
-        await hl.loadLanguage(lang as any)
-      }
-      if (cancelled) return
-
-      const result = hl.codeToHtml(source, {
-        lang,
-        theme: 'github-dark',
-        transformers: [
-          {
-            line(node, line) {
-              node.properties['data-line'] = line
-            },
-          },
-        ],
-      })
-      if (!cancelled) {
-        setHtml(result)
-        setLineCount(source.split('\n').length)
-      }
-    })()
+    highlight(source, lang).then((h) => {
+      if (!cancelled) setHtml(h)
+    })
     return () => { cancelled = true }
   }, [source, lang])
 
-  if (!html) {
-    return (
-      <div className="flex items-center justify-center h-32 text-ide-text-dim text-sm">
-        Highlighting...
-      </div>
-    )
-  }
-
   return (
     <div className="flex overflow-x-auto">
-      {/* Sticky line numbers */}
-      <div
-        className="sticky left-0 z-10 shrink-0 select-none text-right pr-4 font-mono text-[13px] leading-[22px] bg-ide-bg-deep"
-        style={{ minWidth: '48px' }}
-      >
-        {Array.from({ length: lineCount }, (_, i) => (
-          <div key={i} className="min-h-[22px] text-ide-text-dim/40 hover:text-ide-text-dim/70 transition-colors">
-            {i + 1}
-          </div>
-        ))}
-      </div>
-
-      {/* Highlighted code */}
-      <div
-        className="flex-1 min-w-0 font-mono text-[13px] leading-[22px]"
-        // biome-ignore lint/security/noDangerouslySetInnerHtml: Shiki output is trusted
-        dangerouslySetInnerHTML={{ __html: html }}
-      />
+      <LineNumbers count={lineCount} />
+      {html ? (
+        <div
+          className="flex-1 min-w-0 font-mono text-[13px] leading-[22px]"
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: Shiki output is trusted
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
+      ) : (
+        <pre className="flex-1 min-w-0 font-mono text-[13px] leading-[22px] m-0 p-0 text-ide-text-primary/70 whitespace-pre">
+          {source}
+        </pre>
+      )}
     </div>
   )
 }
@@ -111,7 +102,7 @@ export function EditorPane() {
         )}
         {!loading && !error && sources[activeFile.id] && (
           <div className="py-2">
-            <HighlightedCode source={sources[activeFile.id]} lang={activeFile.language} />
+            <CodeView source={sources[activeFile.id]} lang={activeFile.language} />
           </div>
         )}
       </div>
