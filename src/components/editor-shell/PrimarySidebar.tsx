@@ -1,9 +1,7 @@
-import { FolderOpenIcon, GitPullRequestIcon, FileIcon } from '@phosphor-icons/react'
-import { useFileSystem } from './file-system-context'
+import { FolderOpenIcon, GitPullRequestIcon } from '@phosphor-icons/react'
+import { FileTree } from './FileTree'
 
 export function PrimarySidebar() {
-  const { files, activeFile, selectFile } = useFileSystem()
-
   return (
     <div className="flex flex-col h-full w-[250px] shrink-0 font-host-grotek">
       {/* Icon row */}
@@ -24,26 +22,9 @@ export function PrimarySidebar() {
         {/* Separator */}
         <div className="w-full h-px bg-ide-border-separator/10 shrink-0" />
 
-        {/* File list */}
+        {/* File tree */}
         <div className="flex flex-col py-1">
-          {files.map((file) => {
-            const isActive = activeFile.id === file.id
-            return (
-              <button
-                key={file.id}
-                type="button"
-                onClick={() => selectFile(file)}
-                className={`flex items-center gap-2 px-3 py-1 text-xs text-left cursor-pointer border-none transition-colors ${
-                  isActive
-                    ? 'bg-ide-bg-active-tab/60 text-ide-text-muted'
-                    : 'bg-transparent text-ide-text-dim hover:text-ide-text-muted hover:bg-ide-bg-active-tab/20'
-                }`}
-              >
-                <FileIcon size={14} className={isActive ? 'text-ide-text-secondary/60' : 'text-ide-text-dim/40'} weight="regular" />
-                <span className="truncate">{file.name}</span>
-              </button>
-            )
-          })}
+          <FileTree />
         </div>
       </div>
     </div>
