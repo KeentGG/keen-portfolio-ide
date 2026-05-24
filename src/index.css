@@ -95,4 +95,19 @@ body {
   display: block;
   min-height: 22px;
   padding-right: 16px;
+  /* Kill ghost lines: inline spans reserve descender space */
+  line-height: 22px;
+  vertical-align: top;
+}
+
+/* Also target bare .line in case Shiki doesn't wrap in .shiki */
+.line {
+  display: block;
+  line-height: 22px;
+  vertical-align: top;
+}
+
+/* Inline token spans inside lines — no extra space */
+.line span {
+  vertical-align: top;
 }
