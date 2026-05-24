@@ -92,17 +92,18 @@ body {
 }
 
 .shiki code .line {
-  display: block;
+  display: inline-block;
+  width: 100%;
   min-height: 22px;
   padding-right: 16px;
-  /* Kill ghost lines: inline spans reserve descender space */
   line-height: 22px;
   vertical-align: top;
 }
 
 /* Also target bare .line in case Shiki doesn't wrap in .shiki */
 .line {
-  display: block;
+  display: inline-block;
+  width: 100%;
   line-height: 22px;
   vertical-align: top;
 }
