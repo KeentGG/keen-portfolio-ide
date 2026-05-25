@@ -14,7 +14,7 @@ export interface ProjectFile {
   preview?: ComponentType<PreviewComponentProps>
 }
 
-const REPO_BASE = 'https://raw.githubusercontent.com/KeentGG/keen-portfolio-ide/main'
+const REPO_BASE = 'https://raw.githubusercontent.com/KeentGG/keen-portfolio-ide/ide-theme/main'
 
 export const PROJECT_FILES: ProjectFile[] = [
   {

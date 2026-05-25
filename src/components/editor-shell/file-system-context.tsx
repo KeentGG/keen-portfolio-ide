@@ -29,16 +29,6 @@ export function FileSystemProvider({ children }: { children: ReactNode }) {
         return
       }
 
-      // Files with a preview component are local — skip GitHub fetch
-      if (file.preview) {
-        setSources((prev) => ({
-          ...prev,
-          [file.id]: `// ${file.name} — local preview file\n// Source will be available once pushed to the repo\n// Path: ${file.path}`,
-        }))
-        setActiveFile(file)
-        return
-      }
-
       setLoading(true)
       setError(null)
       try {
