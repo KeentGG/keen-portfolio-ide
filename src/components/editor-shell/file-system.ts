@@ -1,18 +1,28 @@
+import type { ComponentType } from 'react'
+import { LandingPage } from '../../pages/LandingPage'
+
+export interface PreviewComponentProps {
+  replayKey: number
+}
+
 export interface ProjectFile {
   id: string
   name: string
   path: string
   language: 'tsx' | 'css'
+  /** If set, this file is previewable — preview mode renders this component. */
+  preview?: ComponentType<PreviewComponentProps>
 }
 
 const REPO_BASE = 'https://raw.githubusercontent.com/KeentGG/keen-portfolio-ide/main'
 
 export const PROJECT_FILES: ProjectFile[] = [
   {
-    id: 'preview-pane',
-    name: 'PreviewPane.tsx',
-    path: 'src/components/PreviewPane.tsx',
+    id: 'landing-page',
+    name: 'LandingPage.tsx',
+    path: 'src/pages/LandingPage.tsx',
     language: 'tsx',
+    preview: LandingPage,
   },
   {
     id: 'app',
@@ -82,7 +92,7 @@ export const PROJECT_FILES: ProjectFile[] = [
   },
 ]
 
-export const DEFAULT_FILE_ID = 'preview-pane'
+export const DEFAULT_FILE_ID = 'landing-page'
 
 export async function fetchFileSource(file: ProjectFile): Promise<string> {
   const url = `${REPO_BASE}/${file.path}`

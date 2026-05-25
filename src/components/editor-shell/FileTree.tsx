@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import type { ReactNode } from 'react'
 import {
   FolderOpenIcon,
   FolderIcon,
